@@ -1,0 +1,23 @@
+
+Lua Element Tree
+================
+
+Lua Element Tree is a library that enables manipulation of XML documents
+as simple data structures in Lua.
+
+Requirements
+------------
+
+Lua Element Tree depends on [Lua 5.1][Lua] and [LuaExpat][].
+
+[Lua]: http://www.lua.org
+[LuaExpat]: http://www.keplerproject.org/luaexpat/
+
+Installation
+------------
+
+For Linux: as root, type:
+
+    tar zxvf etree-0.1.tar.gz
+    cd etree-0.1
+    make install

@@ -1,0 +1,191 @@
+
+
+<h1>ETree - Lua Element Tree</h1>
+
+<h2>Overview</h2>
+<p>Lua Element Tree is a library that enables manipulation of XML documents
+   as simple data structures in Lua. The xml document
+</p>
+<pre><code>&lt;root&gt;text1&lt;elt id=&quot;1&quot; name=&quot;inner&quot;&gt;text2&lt;/elt&gt;&lt;/root&gt;
+</code></pre><p>corresponds for example to the Lua table
+</p>
+<pre><code>{
+  &quot;text1&quot;,
+  {
+    &quot;text2&quot;,
+    tag = &quot;elt&quot;,
+    attr = {&quot;id&quot;, &quot;name&quot;, id = &quot;1&quot;, name = &quot;inner&quot;}
+  },
+  tag = &quot;root&quot;,
+}
+</code></pre><p>Two functions provides the main Lua Element Tree functionality:
+</p>
+<ul>
+ <li>
+     <code>elt = fromstring(xml)</code> converts an xml string to a table
+ </li>
+
+ <li>
+     <code>xml = tostring(elt)</code> converts a table to an xml string
+ </li>
+</ul>
+
+<h2>The Object Model</h2>
+<p>Lua Element Tree is an extension of <a href="http://www.keplerproject.org/luaexpat/">LuaExpat</a> and shares its <a href="http://www.keplerproject.org/luaexpat/lom">object
+model</a>. XML elements are described by tables that have:
+</p>
+<ul>
+ <li>
+     a field <code>tag</code> that holds the element's name,
+ </li>
+
+ <li>
+     an optional field <code>attr</code> that stores the element's attributes,
+ </li>
+
+ <li>
+     an array-part that stores the element's children.
+ </li>
+</ul>
+<p>This model can be considered as a simplification of the <a href="http://www.w3.org/TR/xpath#data-model">xpath 1.0 data
+model</a> that ignores comments, processing instructions and namespaces.
+   Because of the lack of such nodes, there is no need to distinguish the root
+   node from the top-level element. Text nodes are represented as Lua strings,
+   with an implicit utf-8 encoding. Element attributes are described as a
+   table whose keys are attribute names and values are attributes values.
+   The array part of the table <em>may</em> be used to describe the order of the
+   attributes.
+</p>
+<p>The function <code>fromstring</code> always export elements whose attribute tables are
+   fully ordered.
+</p>
+<pre><code>elt = etree.fromstring(&quot;&lt;elt a='1' b='2' c='3'/&gt;&quot;)
+elt.attr =&gt; {&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, a=&quot;1&quot;, b=&quot;2&quot;, c=&quot;3&quot;}
+</code></pre><p>On the other hand, functions that <em>require</em> elements for arguments are more
+   flexible. They rely on a slight extension of the object model that allows:
+</p>
+<ul>
+ <li>
+     a partial ordering of the attribute tables,
+ </li>
+
+ <li>
+     the use of any numeric value as an index.
+ </li>
+</ul>
+<p>Unordered attributes always appear after the ordered ones in the xml document.
+</p>
+<p>As a consequence, ordered attributes do not need to have consecutives indices:
+</p>
+<pre><code>elt.attr[2] = nil
+elt.attr =&gt; {&quot;a&quot;, [2]=&quot;c&quot;, a=&quot;1&quot;, b=&quot;2&quot;, c=&quot;3&quot;}
+etree.tostring(elt) =&gt; &quot;&lt;elt a=&quot;1&quot; c=&quot;3&quot; b=&quot;2&quot;/&gt;&quot;
+</code></pre><p>The use of non-positive or non-integer indices may simplify attribute
+   reordering:
+</p>
+<pre><code>elt.attr[2] = nil; elt.attr[0] = &quot;c&quot;; elt.attr[0.5] = &quot;b&quot;
+elt.attr =&gt; {&quot;a&quot;, [0]=&quot;c&quot;, [0.5]=&quot;b&quot;, a=&quot;1&quot;, b=&quot;2&quot;, c=&quot;3&quot;}
+etree.tostring(elt) =&gt; &quot;&lt;elt c=&quot;3&quot; b=&quot;2&quot; a=&quot;1&quot;/&gt;&quot;
+</code></pre><p>Unordered attributes appear in no particular order:
+</p>
+<pre><code>elt.attr = {}
+etree.tostring(elt) =&gt; &quot;&lt;elt a='1' b='2' c='3'/&gt;&quot;
+</code></pre>
+<h2>XML Output Stream</h2>
+<p>An XML document based on a element may be generated as a string with the
+   <code>tostring</code> function. This function is a simple helper function whose
+   implementation is very simple:
+</p>
+<pre><code>function tostring(elt)
+  buffer = StringBuffer()
+  ElementTree(elt):write(buffer)
+  return base.tostring(buffer)
+end
+</code></pre><p>The <code>StringBuffer</code> instance is an example of <em>file-like</em> object: a table that
+   implements the <code>write</code> method. The arguments to successive calls to <code>write</code> are
+   stored in order and concatenated when <code>tostring</code> is called.
+</p>
+<p>The <code>ElementTree</code> class is designed such that <em>any</em> such file-like object is an
+   admissible argument to the <code>write</code> method.
+</p>
+<pre><code>et = ElementTree(elt)
+et:write(file)
+</code></pre><p>In particular, <code>io.stdout</code> is a valid choice. This is the default value
+   when no <code>file</code> argument is given.
+</p>
+
+<h2>XML Output Configuration</h2>
+<p>The XML output may be configured by an extra <code>options</code> table:
+</p>
+<pre><code>et = ElementTree(elt, options)
+</code></pre><p>The valid options -- <code>decl</code>, <code>empty</code>, <code>attr_sort</code> and <code>encoding</code> -- are
+   detailled below. For example, to output XML consistent with James Clark's
+   <a href="http://www.jclark.com/xml/canonxml.html">canonical XML</a> standard, select
+</p>
+<pre><code>options = {
+            decl       = false,
+            empty_tags = false,
+            attr_sort  = etree.lexicographic,
+            encoding   = etree.encoding.most
+          }
+</code></pre>
+<h3>XML Declaration -- <code>decl</code></h3>
+<p>Control the inclusion of an XML declaration in the generated XML document.
+   Set to <code>true</code> (the default) or <code>false</code>.
+</p>
+
+<h3>Empty Tags -- <code>empty_tags</code></h3>
+<p>Allows or forbids the use of the empty tags specific notation.
+   Set to <code>true</code> (the default) or <code>false</code>.
+</p>
+
+<h3>Attribute Order -- <code>attr_sort</code></h3>
+<p>Selects the ordering of attributes in the final document.
+   The <code>attr_sort</code> value is a function that receives attribute tables as described
+   in the Object Model section. Such attributes are unordered, partially ordered
+   or fully ordered. In any case, the function shall produce an array that fully
+   orders the attribute names.
+</p>
+<p>For example, the function <code>lexicographic</code> ignores any ordering information
+   that may be given in the attributes table and sort the attributes with the
+   lexicographic order of their names:
+</p>
+<pre><code>function lexicographic(attrs)
+local attrs_ = {}
+for attr, _ in attrs do
+    if type(attr) == &quot;string&quot; then
+      table.insert(attrs_, attr)
+    end
+end
+return table.sort(attrs_)
+end
+</code></pre>
+<h3>Entity Encoding -- <code>encoding</code></h3>
+<p>Provide the encoding maps used to encode the special characters that are
+   special to XML. The <code>encoding</code> argument shall be a pair of arrays
+</p>
+<pre><code>encoding = {cdata_encoding, attributes_encoding}
+</code></pre><p>The left-hand side strings in these arrays are replaced in order with the
+   the right-hand side values when the XML is generated. The first array is used
+   to encode character data and attribute names, the second for attribute values.
+</p>
+<p>The default encoding maps are:
+</p>
+<pre><code>encoding = {
+             { {'&amp;',&quot;&amp;amp;&quot;}, {'&lt;',&quot;&amp;lt;}, {'&gt;',&quot;&amp;gt;&quot;} },
+             { {'&amp;',&quot;&amp;amp;&quot;}, {'&lt;',&quot;&amp;lt;}, {'&gt;',&quot;&amp;gt;&quot;}, {'&quot;',&quot;&amp;quot;&quot;} }
+           }
+</code></pre><p>Element Tree provides four encoding maps via
+</p>
+<p>   &gt;&gt;&gt; etree.encoding[i] -- i=1,...,4
+</p>
+<p>The map <code>etree.encoding[1]</code>, or <code>etree.encoding[&quot;minimal&quot;]</code> only transforms
+   <code>'&amp;'</code> and <code>'&lt;'</code>, adding <code>'&quot;'</code> for the attribute values. The standard map
+   <code>etree.encoding[1]</code>, or <code>etree.encoding. standard</code> adds the symbol <code>'&gt;'</code>.
+   The map 'etree.encoding[3]', or <code>etree.encoding.strict</code> encodes more symbols
+   in order to bypass the <a href="http://www.w3.org/TR/REC-xml/#sec-line-ends">end-of-line handling</a> and <a href="http://www.w3.org/TR/REC-xml/#AVNormalize">attribute-value
+normalization</a> XML mecanisms. Finally, the fourth level (<code>most</code>) encodes
+   all special symbols as well as <code>'\r'</code>, <code>'\n'</code> and <code>'\t'</code>.
+</p>
+
+
