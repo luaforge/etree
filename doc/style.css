@@ -1,0 +1,195 @@
+
+html {
+  text-align: left
+}
+
+body {
+  margin-left: 2cm;
+  margin-right: 2cm;
+  margin-top:  1cm;
+  padding: 0;
+  font-family: Verdana, "Bitstream Vera Sans", sans-serif;
+  line-height: 1.5em;
+  color: rgb(00,00,00); /*#ffffff;*/
+  background-color: rgb(255,255,255); /*#4a525a;*/
+  text-align: center;
+  min-width: 760px;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: rgb(00,00,150); /*#ddd;*/ 
+  border-color: rgb(00,00,150); /*#888;*/
+  border-width: 0 0 1px 0;
+  border-style: none none solid none;
+  padding: 3px 0px -2px 0px;
+  background-color: inherit;
+}
+
+a:visited {
+  color: rgb(00,00,150); /*#ddd;*/ 
+  border-color: rgb(00,00,150); /*#888;*/
+  border-width: 0 0 1px 0;
+  border-style: none none none none;
+  padding: 3px 0px 2px 0px;
+  background-color: inherit;
+}
+
+a:hover {
+  color: white;
+  text-decoration: none;
+  background-color: rgb(00,60,150); /*#606870;*/
+  border-color: #606870;
+}
+
+p {
+  text-align: left;
+  margin: 0 0 1.6em 0;
+  padding: 0;
+}
+
+h1 {
+  font-family: Verdana, "Bitstream Vera Sans", Georgia, serif;
+  font-size: 1.46em; /* was 1.46em for Georgia */
+  text-transform: uppercase;
+  /* font-variant: small-caps; */
+  line-height: 1.5em;
+  text-align: left;
+  font-weight: normal;
+  letter-spacing: .2em;
+  margin: 0em 0px 1.25em 0px;
+}
+
+h2 {
+  border-bottom: medium solid #ff0000;
+  font-family: Verdana, "Bitstream Vera Sans", sans-serif;
+  font-size: 1em;
+  text-align: left;
+  font-weight: /*bold;*/ normal;
+  line-height: 1.8em;
+  letter-spacing: .2em;
+  margin: 4em 0 1em 0;
+  text-transform: uppercase;
+}
+
+h1 + h2 {
+  margin-top: 2em;
+}
+
+h2 + h3 {
+  margin-top: 1.5em;
+}
+
+h3 {
+  font-family: Verdana, "Bitstream Vera Sans", sans-serif;
+  font-size: .91em;
+  text-align: left;
+  font-weight: normal;
+  line-height: 1.8em;
+  letter-spacing: .2em;
+  margin-bottom: 1.4em;
+  margin-top: 3em;
+  text-transform: uppercase;
+}
+
+p + h3 {
+  margin-top: 4em;
+}
+
+pre + h3 {
+  margin-top: 4em;
+}
+
+h6 + h2 {
+  margin-top: 2em;
+}
+
+
+h4, h5, h6 {
+  font-family: Verdana, "Bitstream Vera Sans", sans-serif;
+  font-size: 1em;
+  text-align: left;
+  font-weight: bold;
+  line-height: 1.8em;
+  margin: 2em 0 0 0;
+}
+
+strong {
+  font-weight: normal;
+  font-size: .91em;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+em em {
+  font-style: normal;
+}
+
+strong strong {
+  font-weight: bold;
+}
+
+blockquote {
+  font-size: 1em;
+  margin: 2em 2em 2em 1em;
+  padding: 0 .75em 0 1.25em;
+  border-left: 1px solid #777;
+  border-right: 0px solid #777;
+}
+
+blockquote strong {
+  font-weight: bold;
+  font-size: 1em;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+cite {
+  font-weight: normal;
+  font-style: italic;
+}
+
+ul, ol {
+  text-align: left;
+  padding-left: 1.25em;
+  margin: 0 0 2em 1em;
+}
+
+
+pre {
+  border-left: medium solid rgb(00,60,240);
+  font-family: Courier, Monaco, ProFont, "Bitstream Vera Sans Mono", 
+               "Andale Mono", monospace;
+  line-height: 1.45em;
+  color: rgb(00,00,100);
+  /* color: #eee; */
+  /*background-color: rgb(00,80,130);*/
+  margin: 2em 0 2.5em 0;
+  padding: 5px 0 5px 10px;
+  /*
+  border-width: 1px 0 1px 0;
+  border-color: #6b6b6b;
+  border-style: solid;
+  */
+}
+
+code {
+  font-family: monospace, Courier, Monaco, ProFont, 
+               "Bitstream Vera Sans Mono", "Andale Mono";
+  font-size: 1.00em;
+}
+
+ul {
+  list-style-type: square;
+}
+
+ul ul {
+  list-style-type: square;
+}
+
+ul ul ul {
+  list-style-type: square;
+}
