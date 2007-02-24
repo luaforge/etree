@@ -1,35 +1,61 @@
 #!/usr/bin/env lua
 
--- This script requires a markdown processor to generate
--- the html documentation for etree.
+-------------------------------------------------------------------------------
+--             Generate the HTML documentation for etree                     --
+-------------------------------------------------------------------------------
 
-os.execute("markdown manual.txt > _manual.html")
+-- A markdown processor is required - for details refer to:
+--
+--     http://daringfireball.net/projects/markdown/
+--
+-- This script has been tested only with the Python implementation found at:
+--
+--     http://www.freewisdom.org/projects/python-markdown/
 
-local file = io.open("_manual.html")
-local buffer = {}
-local write = function(string)
-  table.insert(buffer, string)
-  table.insert(buffer, "\n")
+MARKDOWN = "markdown"
+SOURCE   = "manual.txt"
+OUTPUT   = "manual.html"
+
+-------------------------------------------------------------------------------
+
+function main()
+
+  require "etree"
+
+  os.execute(MARKDOWN .. " " .. SOURCE .. " > _manual.html 2>/dev/null")
+  file = io.open("_manual.html")
+  body = etree.fromstring("<body>"..file:read("*a").."</body>")
+  file:close()
+
+  head = etree.fromstring([[
+  <head>
+  <title>Lua Element Tree</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  ]])
+
+  html = {tag="html", head, body}
+  html.attr = {
+                xmlns="http://www.w3.org/1999/xhtml",
+                ["xml:lang"]="en",
+                lang="en"
+              }
+
+  doctype = [[
+  <!DOCTYPE html 
+      PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  ]]
+
+  output = io.open(OUTPUT, "w")
+  output:write(doctype)
+  tree = etree.ElementTree(html, {decl=false})
+  tree:write(output)
+
+  os.execute("rm _manual.html 2>/dev/null")
 end
 
-head = [[
-<head>
-<title>Lua Element Tree</title>
-<link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-]]
+-------------------------------------------------------------------------------
 
-write("<html>")
-write(head)
-write("<body>")
-for line in file:lines() do
-  write(line)
-end
-write("</body>")
-write("</html>")
+pcall(main)
 
-file = io.open("manual.html", "w")
-file:write(table.concat(buffer))
-file:close()
-
-os.execute("rm _manual.html")

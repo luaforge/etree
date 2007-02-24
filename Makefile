@@ -1,15 +1,14 @@
 
 include config.mk
 
-VERSION = 0.1
+VERSION = 0.1.1
 ETREE = etree-$(VERSION)
 
 .PHONY: install
-install:
-	install -d $(libdir) $(docdir)
+install: doc
+	install -d $(libdir) $(docdir)/etree
 	install src/etree.lua $(libdir)
-	make -C doc
-	install doc/*.html doc/*.txt doc/*.css $(docdir)
+	install doc/*.html doc/*.txt doc/*.css $(docdir)/etree
 
 .PHONY: clean
 clean:
@@ -20,13 +19,12 @@ clean:
 	make -C doc clean
 
 .PHONY: dist
-dist:
+dist: doc
 	rm -rf build; mkdir build; cd build; mkdir $(ETREE)
 	cp README LICENSE build/$(ETREE)
 	cp config.mk Makefile build/$(ETREE)
 	cd build/$(ETREE); mkdir src; mkdir doc
 	cp -rf src/etree.lua build/$(ETREE)/src
-	make doc
 	cp -rf doc/*.txt doc/*.html doc/*.css doc/*.lua build/$(ETREE)/doc
 	cp -rf doc/Makefile build/$(ETREE)/doc
 	cd build; tar zcvf $(ETREE).tar.gz $(ETREE)

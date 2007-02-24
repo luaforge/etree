@@ -9,6 +9,7 @@ local io, string, table = io, string, table
 
 require "lxp.lom"
 local lxp = lxp
+local unpack = unpack
 
 module "etree"
 
@@ -18,7 +19,7 @@ fromstring = lxp.lom.parse
 
 function Type(cls)
   local constructor = function(cls, ...)
-    return cls:new(...)
+    return cls:new(unpack(arg)) -- cls:new(...) in Lua 5.1
   end
   local mt = getmetatable(cls)
   if mt == nil then
@@ -159,12 +160,13 @@ ElementTree = Type {
       file:write(decl)
     end
     local elt = elt or self.root
+    local cdata_encoding, attributes_encoding = unpack(self.options.encoding)
+
     file:write("<" .. elt.tag)
     local elt_attr = elt.attr or {}
     local attrs = self.options.attr_sort(elt_attr)
     for _, name in ipairs(attrs) do
       local value = elt_attr[name]
-      local cdata_encoding, attributes_encoding = unpack(self.options.encoding)
       name  = ElementTree._encode(name, cdata_encoding)
       value = ElementTree._encode(value, attributes_encoding)
       local assignment = string.format('%s="%s"', name, value)

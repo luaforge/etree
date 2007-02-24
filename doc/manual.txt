@@ -2,10 +2,10 @@
                                Lua Element Tree
 ===============================================================================
 
-<!--
-  -- Generate HTML documentation for etree with markdown:
-  --
-  --   http://daringfireball.net/projects/markdown/
+<!-- This documentation is written in the markdown format:
+       http://daringfireball.net/projects/markdown/
+     To generate the HTML documentation, type:
+       ./html.lua
   -->
 
   Overview
@@ -32,6 +32,50 @@ Two functions provides the main Lua Element Tree functionality:
 
   - `elt = fromstring(xml)` converts an xml string to a table
   - `xml = tostring(elt)` converts a table to an xml string
+
+ Getting Started - Project Information
+-------------------------------------------------------------------------------
+
+### Status ###
+
+The current version of Lua Element Tree is 0.1.
+
+### Download ###
+
+Lua Element Tree can be downloaded from the [LuaForge][] page.
+
+[LuaForge]: www.luaforge.net/projects/etree/files
+
+### Dependencies ###
+
+Lua Element Tree depends on:
+
+  - [Lua 5.1][Lua],
+  - [LuaExpat][].
+
+If you want to regenerate the html documentation - with `make doc` - you also
+need:
+
+  - [Python Markdown][PyMarkdown]
+
+[Lua]: http://www.lua.org
+[LuaExpat]: http://www.keplerproject.org/luaexpat/
+[PyMarkdown]: http://www.freewisdom.org/projects/python-markdown/
+
+### Installation ###
+
+Download the `etree-0.1` source distribution. Then, as root, type:
+
+    shell$ tar zxvf etree-0.1.tar.gz
+    shell$ cd etree-0.1
+    shell$ make install
+
+### License ###################################################################
+
+Lua Element Tree is distributed under the [MIT license][MIT].
+
+[MIT]: http://www.opensource.org/licenses/mit-license.php
+
 
   The Object Model
 -------------------------------------------------------------------------------

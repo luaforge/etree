@@ -12,7 +12,7 @@ body {
   line-height: 1.5em;
   color: rgb(00,00,00); /*#ffffff;*/
   background-color: rgb(255,255,255); /*#4a525a;*/
-  text-align: center;
+  /*text-align: center;*/
   min-width: 760px;
 }
 
@@ -160,6 +160,7 @@ ul, ol {
 
 
 pre {
+  text-align: left;
   border-left: medium solid rgb(00,60,240);
   font-family: Courier, Monaco, ProFont, "Bitstream Vera Sans Mono", 
                "Andale Mono", monospace;
